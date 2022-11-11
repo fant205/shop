@@ -1,10 +1,8 @@
 package com.alexey.shop.controllers;
 
-import com.alexey.shop.dto.Product;
+import com.alexey.shop.dto.ProductDTO;
 import com.alexey.shop.services.ProductService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,7 +14,7 @@ public class MainController {
     private final ProductService productService;
 
     @GetMapping("/product/all")
-    public List<Product> getAllProducts() {
+    public List<ProductDTO> getAllProducts() {
         return productService.findAllProducts();
     }
 
