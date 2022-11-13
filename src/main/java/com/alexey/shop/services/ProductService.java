@@ -1,6 +1,6 @@
 package com.alexey.shop.services;
 
-import com.alexey.shop.dao.ProductDao;
+import com.alexey.shop.dao.ProductsDao;
 import com.alexey.shop.dto.ProductDTO;
 import com.alexey.shop.model.Product;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductService {
 
-    private final ProductDao productDao;
+    private final ProductsDao productDao;
 
     public List<ProductDTO> findAllProducts() {
         List<Product> all = productDao.findAll();

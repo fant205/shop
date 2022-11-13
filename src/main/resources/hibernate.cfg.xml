@@ -19,5 +19,6 @@
         <property name="hbm2ddl.auto">none</property>
         <property name="current_session_context_class">thread</property>
         <mapping class="com.alexey.shop.model.Product"/>
+        <mapping class="com.alexey.shop.model.User"/>
     </session-factory>
 </hibernate-configuration>
