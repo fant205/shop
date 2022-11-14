@@ -21,7 +21,7 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
     @JoinTable(
             name = "users_products",
             joinColumns = @JoinColumn(name = "user_id"),
