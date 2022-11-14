@@ -34,4 +34,9 @@ public class MainController {
         shopService.delete(id);
     }
 
+    @GetMapping("/products/between")
+    public List<ProductDTO> findProductsBetween(@RequestParam(defaultValue = "0") Integer min, @RequestParam(defaultValue = "50") Integer max){
+        return shopService.findProductsBetween(min, max);
+    }
+
 }

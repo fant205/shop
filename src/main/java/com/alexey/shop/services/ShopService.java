@@ -20,14 +20,13 @@ public class ShopService {
 
     public ProductDTO findProductById(Long id) {
         Product product = productsRepository.findById(id).orElseThrow();
-        ProductDTO productDTO = new ProductDTO(product.getId(), product.getTitle(), product.getCost());
-        return productDTO;
+        return new ProductDTO(product.getId(), product.getTitle(), product.getCost());
     }
 
     public List<ProductDTO> findAllProducts() {
         List<Product> list = productsRepository.findAll();
-        List<ProductDTO> productDTOS = list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
-        return productDTOS;
+        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
+
     }
 
     @Transactional
@@ -43,5 +42,10 @@ public class ShopService {
     public void delete(Long id){
         Product product = Product.builder().id(id).build();
         productsRepository.delete(product);
+    }
+
+    public List<ProductDTO> findProductsBetween(Integer min, Integer max){
+        List<Product> list = productsRepository.findProductsBetween(min, max);
+        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
     }
 }
