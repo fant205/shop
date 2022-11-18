@@ -1,14 +1,18 @@
 package com.alexey.shop.services;
 
-import com.alexey.shop.dto.ProductDTO;
-import com.alexey.shop.dto.ProductsAllDTO;
+import com.alexey.shop.convertor.ProductConvertor;
+import com.alexey.shop.dto.ProductDto;
+import com.alexey.shop.dto.ProductsGetDto;
 import com.alexey.shop.model.Product;
 import com.alexey.shop.repository.ProductsRepository;
+import com.alexey.shop.repository.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -19,22 +23,28 @@ import java.util.stream.Collectors;
 public class ShopService {
 
     private final ProductsRepository productsRepository;
+    private final ProductConvertor productConvertor;
 
-    public ProductDTO findProductById(Long id) {
+    public ProductDto findProductById(Long id) {
         Product product = productsRepository.findById(id).orElseThrow();
-        return new ProductDTO(product.getId(), product.getTitle(), product.getCost());
+        return new ProductDto(product.getId(), product.getTitle(), product.getCost());
     }
 
-    public ProductsAllDTO findAllProducts(Integer min, Integer max, Integer page, Integer size) {
+    public ProductsGetDto findAllProducts(Long id, String title, Integer min, Integer max, Integer page, Integer size) {
+        Specification<Product> spec = Specification
+                .where(id == null ? null : ProductSpecification.equalId(id))
+                .and(StringUtils.hasText(title) ? ProductSpecification.likeTitle(title) : null)
+                .and(min == null ? null : ProductSpecification.greaterThanOrEqualToScore(min))
+                .and(max == null ? null : ProductSpecification.lessThanOrEqualToScore(max));
+
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id"));
-//        Page<Product> products = productsRepository.findAll(pageRequest);
-        Page<Product> products = productsRepository.findProductsAll(min, max, pageRequest);
-        List<ProductDTO> dtos = products.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
-        return new ProductsAllDTO(dtos, products.getTotalPages(), products.getTotalElements());
+        Page<Product> products = productsRepository.findAll(spec, pageRequest);
+        List<ProductDto> dtos = products.map(product -> productConvertor.convertToDto(product)).toList();
+        return new ProductsGetDto(dtos, products.getTotalPages(), products.getTotalElements());
     }
 
     @Transactional
-    public void add(ProductDTO productDTO) {
+    public void save(ProductDto productDTO) {
         Product product = Product.builder()
                 .id(productDTO.getId())
                 .title(productDTO.getTitle())
@@ -43,19 +53,21 @@ public class ShopService {
     }
 
     @Transactional
-    public void delete(Long id){
+    public void delete(Long id) {
         Product product = Product.builder().id(id).build();
         productsRepository.delete(product);
     }
 
-    public List<ProductDTO> findProductsBetween(Integer min, Integer max){
-        List<Product> list = productsRepository.findProductsBetween(min, max);
-        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
-    }
+//    public List<ProductDTO> findProductsBetween(Integer min, Integer max) {
+//        List<Product> list = productsRepository.findProductsBetween(min, max);
+//        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
+//    }
 
-    public void changeCost(Integer cost, Long id) {
-        Product product = productsRepository.findById(id).get();
-        product.setCost(product.getCost() + cost);
-        productsRepository.save(product);
-    }
+//    public void changeCost(Integer cost, Long id) {
+//        Product product = productsRepository.findById(id).get();
+//        product.setCost(product.getCost() + cost);
+//        productsRepository.save(product);
+//    }
+
+
 }

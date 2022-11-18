@@ -9,9 +9,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductsAllDTO {
+public class ProductsGetDto {
 
-    private List<ProductDTO> list;
+    private List<ProductDto> list;
     private Integer pagesCount;
     private Long recordsTotal;
 }
