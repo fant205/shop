@@ -31,12 +31,12 @@ public class MainController {
 
     @PostMapping
     public void create(@RequestBody ProductDto productDTO) {
-        shopService.save(productDTO);
+        shopService.create(productDTO);
     }
 
     @PutMapping
     public void update(@RequestBody ProductDto productDto) {
-        shopService.save(productDto);
+        shopService.update(productDto);
     }
 
     @DeleteMapping("/{id}")

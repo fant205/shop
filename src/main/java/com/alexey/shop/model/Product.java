@@ -27,12 +27,4 @@ public class Product {
     @Column(name = "cost")
     private Integer cost;
 
-    @ManyToMany
-    @JoinTable(
-            name = "users_products",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> users;
-
 }
