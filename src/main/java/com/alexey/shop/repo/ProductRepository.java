@@ -30,4 +30,9 @@ public class ProductRepository {
         return list.stream().filter(o -> o.getId().equals(id)).findFirst().orElseThrow(() -> new RuntimeException("Продукт не найден!"));
     }
 
+    public void delete(Long id){
+        Product product = findById(id);
+        list.remove(product);
+    }
+
 }

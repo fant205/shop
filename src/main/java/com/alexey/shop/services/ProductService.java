@@ -20,4 +20,13 @@ public class ProductService {
     public Product findProductById(Long id) {
         return productRepository.findById(id);
     }
+
+    public void changeCost(Long id, Integer cost) {
+        Product product = productRepository.findById(id);
+        product.setCost(product.getCost() + cost);
+    }
+
+    public void delete(Long id){
+        productRepository.delete(id);
+    }
 }
