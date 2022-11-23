@@ -1,11 +1,12 @@
 package com.alexey.shop.services;
 
-import com.alexey.shop.convertor.ProductConvertor;
 import com.alexey.shop.dto.ProductDto;
 import com.alexey.shop.dto.ProductsGetDto;
+import com.alexey.shop.mapper.ProductMapper;
 import com.alexey.shop.model.Product;
 import com.alexey.shop.repository.ProductsRepository;
 import com.alexey.shop.repository.specification.ProductSpecification;
+import com.alexey.shop.validators.ProductValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,18 +17,17 @@ import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ShopService {
 
     private final ProductsRepository productsRepository;
-    private final ProductConvertor productConvertor;
+    private final ProductValidator productValidator;
 
     public ProductDto findProductById(Long id) {
         Product product = productsRepository.findById(id).orElseThrow();
-        return new ProductDto(product.getId(), product.getTitle(), product.getCost());
+        return ProductMapper.MAPPER.fromProduct(product);
     }
 
     public ProductsGetDto findAllProducts(Long id, String title, Integer min, Integer max, Integer page, Integer size) {
@@ -39,16 +39,23 @@ public class ShopService {
 
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by("id"));
         Page<Product> products = productsRepository.findAll(spec, pageRequest);
-        List<ProductDto> dtos = products.map(product -> productConvertor.convertToDto(product)).toList();
+        List<ProductDto> dtos = ProductMapper.MAPPER.fromProductList(products.toList());
         return new ProductsGetDto(dtos, products.getTotalPages(), products.getTotalElements());
     }
 
     @Transactional
-    public void save(ProductDto productDTO) {
-        Product product = Product.builder()
-                .id(productDTO.getId())
-                .title(productDTO.getTitle())
-                .cost(productDTO.getCost()).build();
+    public void create(ProductDto productDTO) {
+        productValidator.validate(productDTO);
+        Product product = ProductMapper.MAPPER.toProduct(productDTO);
+        productsRepository.save(product);
+    }
+
+    @Transactional
+    public void update(ProductDto productDTO) {
+        productValidator.validate(productDTO);
+        Product product = productsRepository.findById(productDTO.getId()).orElseThrow();
+        product.setTitle(productDTO.getTitle());
+        product.setCost(productDTO.getCost());
         productsRepository.save(product);
     }
 
@@ -57,17 +64,5 @@ public class ShopService {
         Product product = Product.builder().id(id).build();
         productsRepository.delete(product);
     }
-
-//    public List<ProductDTO> findProductsBetween(Integer min, Integer max) {
-//        List<Product> list = productsRepository.findProductsBetween(min, max);
-//        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
-//    }
-
-//    public void changeCost(Integer cost, Long id) {
-//        Product product = productsRepository.findById(id).get();
-//        product.setCost(product.getCost() + cost);
-//        productsRepository.save(product);
-//    }
-
 
 }
