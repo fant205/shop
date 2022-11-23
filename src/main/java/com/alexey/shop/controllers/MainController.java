@@ -1,7 +1,7 @@
 package com.alexey.shop.controllers;
 
 import com.alexey.shop.dto.ProductDTO;
-import com.alexey.shop.dto.UserDTO;
+import com.alexey.shop.dto.ProductsAllDTO;
 import com.alexey.shop.services.ShopService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -20,8 +20,12 @@ public class MainController {
     }
 
     @GetMapping("/products/all")
-    public List<ProductDTO> getAllProducts() {
-        return shopService.findAllProducts();
+    public ProductsAllDTO getAllProducts(
+            @RequestParam(defaultValue = "0") Integer min,
+            @RequestParam(defaultValue = "100") Integer max,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "3") Integer size) {
+        return shopService.findAllProducts(min, max, page, size);
     }
 
     @PostMapping("/products")
@@ -35,8 +39,13 @@ public class MainController {
     }
 
     @GetMapping("/products/between")
-    public List<ProductDTO> findProductsBetween(@RequestParam(defaultValue = "0") Integer min, @RequestParam(defaultValue = "50") Integer max){
+    public List<ProductDTO> findProductsBetween(@RequestParam(defaultValue = "0") Integer min, @RequestParam(defaultValue = "99") Integer max) {
         return shopService.findProductsBetween(min, max);
+    }
+
+    @GetMapping("/products/change_cost")
+    public void changeCost(@RequestParam Integer cost, @RequestParam Long id) {
+        shopService.changeCost(cost, id);
     }
 
 }
