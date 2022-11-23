@@ -1,40 +1,51 @@
 package com.alexey.shop.services;
 
-import com.alexey.shop.dao.ProductsDao;
-import com.alexey.shop.dao.UsersDao;
 import com.alexey.shop.dto.ProductDTO;
-import com.alexey.shop.dto.UserDTO;
 import com.alexey.shop.model.Product;
-import com.alexey.shop.model.User;
+import com.alexey.shop.repository.ProductsRepository;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class ShopService {
-    private final ProductsDao productsDao;
-    private final UsersDao usersDao;
 
-    public List<ProductDTO> findProductsByUserId(Long id){
-        User user = usersDao.findById(id);
-        List<Product> products = user.getProducts();
-        ArrayList<ProductDTO> result = new ArrayList<>();
-        products.forEach(product -> {
-            result.add(new ProductDTO(product.getId(), product.getTitle(), product.getCost()));
-        });
-        return result;
+    private final ProductsRepository productsRepository;
+
+    public ProductDTO findProductById(Long id) {
+        Product product = productsRepository.findById(id).orElseThrow();
+        return new ProductDTO(product.getId(), product.getTitle(), product.getCost());
     }
 
-    public List<UserDTO> findUsersByProductId(Long id){
-        Product product = productsDao.findById(id);
-        List<User> list = product.getUsers();
-        ArrayList<UserDTO> result = new ArrayList<>();
-        list.forEach(user -> {
-            result.add(new UserDTO(user.getId(), user.getName()));
-        });
-        return result;
+    public List<ProductDTO> findAllProducts() {
+        List<Product> list = productsRepository.findAll();
+        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
+
+    }
+
+    @Transactional
+    public void add(ProductDTO productDTO) {
+        Product product = Product.builder()
+                .id(productDTO.getId())
+                .title(productDTO.getTitle())
+                .cost(productDTO.getCost()).build();
+        productsRepository.save(product);
+    }
+
+    @Transactional
+    public void delete(Long id){
+        Product product = Product.builder().id(id).build();
+        productsRepository.delete(product);
+    }
+
+    public List<ProductDTO> findProductsBetween(Integer min, Integer max){
+        List<Product> list = productsRepository.findProductsBetween(min, max);
+        return list.stream().map(product -> new ProductDTO(product.getId(), product.getTitle(), product.getCost())).collect(Collectors.toList());
     }
 }
