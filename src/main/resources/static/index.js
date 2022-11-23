@@ -1,9 +1,13 @@
 angular.module('app', []).controller('indexController', function ($scope, $http) {
-    const contextPath = 'http://localhost:8189/app';
+    const contextPath = 'http://localhost:8189/app/api/v1/products';
     var currentPage = 0;
     var size = 10;
+    var totalPages = null;
 
     $scope.nextPage = function (i) {
+        if(currentPage + i == totalPages || currentPage + i == -1){
+            return;
+        }
         currentPage = currentPage + i;
         $scope.loadProducts(currentPage);
     };
@@ -13,17 +17,23 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
             page = currentPage;
         }
         console.log("page: " + page);
-        var min = 0;
-        var max = 100;
+        var id = null;
+        var title = null;
+        var min = null;
+        var max = null;
         if($scope.newFilterJson != null){
+            id = $scope.newFilterJson.id;
+            title = $scope.newFilterJson.title;
             min = $scope.newFilterJson.min;
             max = $scope.newFilterJson.max;
         }
 
         $http({
-            url: contextPath + '/products/all',
+            url: contextPath,
             method: 'GET',
             params: {
+                id: id,
+                title: title,
                 min: min,
                 max: max,
                 page: page,
@@ -37,6 +47,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
                     id: index + 1
                 })
             }
+            totalPages = response.data.pagesCount;
             $scope.pagesCount = array;
             console.log($scope.pagesCount);
             $scope.recordsTotal = response.data.recordsTotal;
@@ -59,7 +70,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
 
     $scope.delete = function (id){
         $http({
-            url: contextPath + '/products/delete/' + id,
+            url: contextPath + '/' + id,
             method: 'DELETE',
         }).then(function (response){
             $scope.loadProducts();
@@ -68,7 +79,7 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
 
     $scope.createProductJson = function (){
         console.log($scope.newProductJson);
-        $http.post(contextPath + '/products', $scope.newProductJson)
+        $http.post(contextPath, $scope.newProductJson)
             .then(function (response) {
                 $scope.loadProducts()
             });

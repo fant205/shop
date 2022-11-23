@@ -17,6 +17,10 @@
         <h3>Список продуктов</h3>
 
         <form novalidate ng-submit="loadProducts()">
+            <input class="form-control" type="text" placeholder="Идентификатор продукта" ng-model="newFilterJson.id">
+            <p></p>
+            <input class="form-control" type="text" placeholder="Название продукта" ng-model="newFilterJson.title">
+            <p></p>
             <input class="form-control" type="text" placeholder="Минимальная цена" ng-model="newFilterJson.min">
             <p></p>
             <input class="form-control" type="number" placeholder="Максимальная цена" ng-model="newFilterJson.max">
