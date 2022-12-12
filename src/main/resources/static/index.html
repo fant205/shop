@@ -13,65 +13,77 @@
     <title>Клиенты</title>
 </head>
 <body>
-    <div class="container" ng-controller="indexController">
-        <h3>Список продуктов</h3>
+<div class="container" ng-controller="indexController">
+    <h3>Список продуктов</h3>
 
-        <form novalidate ng-submit="loadProducts()">
-            <input class="form-control" type="text" placeholder="Идентификатор продукта" ng-model="newFilterJson.id">
-            <p></p>
-            <input class="form-control" type="text" placeholder="Название продукта" ng-model="newFilterJson.title">
-            <p></p>
-            <input class="form-control" type="text" placeholder="Минимальная цена" ng-model="newFilterJson.min">
-            <p></p>
-            <input class="form-control" type="number" placeholder="Максимальная цена" ng-model="newFilterJson.max">
-            <p></p>
-            <button type="submit" class="btn btn-primary">Искать</button>
-        </form>
-
+    <form novalidate ng-submit="loadProducts()">
+        <input class="form-control" type="text" placeholder="Идентификатор продукта" ng-model="newFilterJson.id">
         <p></p>
-
-        <nav aria-label="Page navigation example">
-            <ul class="pagination">
-                <li class="page-item"><a class="page-link" href="#" ng-click="nextPage(-1)">Предыдущая</a></li>
-                <li ng-repeat="p in pagesCount" class="page-item"><a class="page-link" href="#" ng-click="loadProducts(p.id - 1)">{{p.id}}</a></li>
-<!--                <li class="page-item"><a class="page-link" href="#">1</a></li>-->
-<!--                <li class="page-item"><a class="page-link" href="#">2</a></li>-->
-<!--                <li class="page-item"><a class="page-link" href="#">3</a></li>-->
-                <li class="page-item"><a class="page-link" href="#" ng-click="nextPage(1)">Следующая</a></li>
-            </ul>
-        </nav>
-        <h6>Количество записей: <span class="badge bg-secondary">{{recordsTotal}}</span></h6>
-
+        <input class="form-control" type="text" placeholder="Название продукта" ng-model="newFilterJson.title">
         <p></p>
-        <table class="table table-hover" cellpadding="0" cellspacing="0">
-            <tr>
-                <td>ID</td>
-                <td>Название продукта</td>
-                <td>Цена</td>
-            </tr>
-            <tbody>
-            <tr ng-repeat="s in productList">
-                <td>{{s.id}}</td>
-                <td>{{s.title}}</td>
-                <td>
-                    <button class="btn btn-danger" ng-click="changeScore(s.id, -1)">-</button>
-                    {{s.cost}}
-                    <button class="btn btn-primary" ng-click="changeScore(s.id, 1)">+</button>
-                    <button class="btn" ng-click="delete(s.id)">Удалить</button>
-                </td>
-            </tbody>
-        </table>
-
+        <input class="form-control" type="number" placeholder="Минимальная цена" ng-model="newFilterJson.min">
         <p></p>
-        <h3>Добавить продукт</h3>
-        <form novalidate ng-submit="createProductJson()">
-            <input class="form-control" type="text" placeholder="Название" ng-model="newProductJson.title">
-            <p></p>
-            <input class="form-control" type="number" placeholder="Цена" ng-model="newProductJson.cost">
-            <p></p>
-            <button type="submit" class="btn btn-primary">Добавить</button>
-        </form>
-    </div>
+        <input class="form-control" type="number" placeholder="Максимальная цена" ng-model="newFilterJson.max">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Искать</button>
+    </form>
+
+    <p></p>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#" ng-click="nextPage(-1)">Предыдущая</a></li>
+            <li ng-repeat="p in pagesCount" class="page-item"><a class="page-link" href="#"
+                                                                 ng-click="loadProducts(p.id - 1)">{{p.id}}</a></li>
+            <li class="page-item"><a class="page-link" href="#" ng-click="nextPage(1)">Следующая</a></li>
+        </ul>
+    </nav>
+    <h6>Количество записей: <span class="badge bg-secondary">{{recordsTotal}}</span></h6>
+
+    <p></p>
+    <table class="table table-hover" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>ID</td>
+            <td>Название продукта</td>
+            <td>Цена</td>
+            <td></td>
+            <td></td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="s in productList">
+            <td>{{s.id}}</td>
+            <td>{{s.title}}</td>
+            <td>
+                <button class="btn btn-danger" ng-click="changeScore(s, -1)">-</button>
+                {{s.cost}}
+                <button class="btn btn-primary" ng-click="changeScore(s, 1)">+</button>
+
+            </td>
+            <td>
+                <button class="btn" ng-click="edit(s)">Изменить</button>
+            </td>
+            <td>
+                <button class="btn" ng-click="delete(s.id)">Удалить</button>
+            </td>
+
+        </tbody>
+    </table>
+
+    <p></p>
+    <!--    <h3>Добавить/Изменить продукт</h3>-->
+    <button ng-click="add()" class="btn btn-primary">Добавить</button>
+    <button ng-click="createProductJson()" class="btn btn-primary">Сохранить</button>
+    <form novalidate ng-submit="createProductJson()">
+        <p></p>
+        <input class="form-control" ng-disabled="disableMe = true" type="text" placeholder="ID"
+               ng-model="newProductJson.id">
+        <p></p>
+        <input class="form-control" type="text" placeholder="Название" ng-model="newProductJson.title">
+        <p></p>
+        <input class="form-control" type="number" placeholder="Цена" ng-model="newProductJson.cost">
+        <p></p>
+    </form>
+</div>
 
 
 </body>

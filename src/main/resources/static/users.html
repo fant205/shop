@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.0/angular.min.js"></script>
+    <script src="users.js"></script>
+    <title>Пользователи</title>
+</head>
+<body>
+<div class="container" ng-controller="indexController">
+    <h3>Список пользователей</h3>
+
+    <form novalidate ng-submit="loadUsers()">
+        <input class="form-control" type="text" placeholder="Идентификатор пользователя" ng-model="newFilterJson.id">
+        <p></p>
+        <input class="form-control" type="text" placeholder="Login пользователя" ng-model="newFilterJson.login">
+        <p></p>
+        <button type="submit" class="btn btn-primary">Искать</button>
+    </form>
+
+    <p></p>
+
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            <li class="page-item"><a class="page-link" href="#" ng-click="nextPage(-1)">Предыдущая</a></li>
+            <li ng-repeat="p in pagesCount" class="page-item">
+                <a class="page-link" href="#" ng-click="loadUsers(p.id - 1)">{{p.id}}</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#" ng-click="nextPage(1)">Следующая</a>
+            </li>
+        </ul>
+    </nav>
+    <h6>Количество записей: <span class="badge bg-secondary">{{recordsTotal}}</span></h6>
+
+    <p></p>
+    <table class="table table-hover" cellpadding="0" cellspacing="0">
+        <tr>
+            <td>ID</td>
+            <td>Login пользователя</td>
+            <td>Роли</td>
+        </tr>
+        <tbody>
+        <tr ng-repeat="s in userList">
+            <td>{{s.id}}</td>
+            <td>{{s.login}}</td>
+            <td>{{s.rolesStr}}</td>
+        </tbody>
+    </table>
+    <p></p>
+
+
+
+
+
+
+</div>
+
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 angular.module('app', []).controller('indexController', function ($scope, $http) {
     const contextPath = 'http://localhost:8189/app/api/v1/products';
     var currentPage = 0;
-    var size = 10;
+    var size = 5;
     var totalPages = null;
 
     $scope.nextPage = function (i) {
@@ -55,17 +55,12 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
 
     };
 
-    $scope.changeScore = function (id, cost){
-        $http({
-            url: contextPath + '/products/change_cost',
-            method: 'GET',
-            params: {
-                id: id,
-                cost: cost
-            }
-        }).then(function (response){
-            $scope.loadProducts();
-        });
+    $scope.changeScore = function (s, cost){
+        s.cost = s.cost + cost;
+        $http.put(contextPath, s)
+            .then(function (response) {
+                $scope.loadProducts()
+            });
     };
 
     $scope.delete = function (id){
@@ -77,12 +72,35 @@ angular.module('app', []).controller('indexController', function ($scope, $http)
         });
     };
 
+     $scope.add = function (){
+            console.log("add");
+            $scope.newProductJson = null;
+//            $scope.showMe = true;
+//            $scope.disableMe = true;
+        };
+
+    $scope.edit = function (s){
+        console.log(s);
+        $scope.newProductJson = s;
+//        $scope.showMe = true;
+        $scope.disableMe = true;
+    };
+
     $scope.createProductJson = function (){
         console.log($scope.newProductJson);
-        $http.post(contextPath, $scope.newProductJson)
-            .then(function (response) {
-                $scope.loadProducts()
-            });
+        if($scope.newProductJson.id == null){
+            //create
+            $http.post(contextPath, $scope.newProductJson)
+                .then(function (response) {
+                    $scope.loadProducts()
+                });
+        } else {
+            //update
+            $http.put(contextPath, $scope.newProductJson)
+                .then(function (response) {
+                    $scope.loadProducts()
+                });
+        }
     };
 
     $scope.loadProducts(0);
